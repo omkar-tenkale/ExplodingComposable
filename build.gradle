@@ -13,6 +13,7 @@ buildscript {
     repositories {
         google()
         mavenCentral()
+        maven { url "https://jitpack.io" }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$agpVersion"
@@ -20,6 +21,21 @@ buildscript {
         classpath "com.vanniktech:gradle-maven-publish-plugin:$mavenPublishVersion"
         classpath "org.jetbrains.dokka:dokka-gradle-plugin:$kotlinVersion"
     }
+    afterEvaluate {
+        publishing {
+            publications {
+                release(MavenPublication) {
+                    groupId = 'com.github.omkar-tenkale'
+                    artifactId = 'ExplodingComposable'
+                    version = '1.0.0'
+                }
+            }
+        }
+    }
+}
+
+plugins {
+    id 'maven-publish'
 }
 
 task clean(type: Delete) {
