@@ -1,5 +1,5 @@
 <div align="center"><img width="300px" height="300px"  src="https://raw.githubusercontent.com/omkar-tenkale/ExplodingComposable/master/art/exploding-composable.webp"/></div>
-<h1 align="center">💢 ExplodingComposable</h1>
+<h1 align="center">💢 Exploding Composable</h1>
 <h4 align="center">A Jetpack Compose utility library to add explosive dust effect animation to any composable</h4>
 
 <div align="center">
@@ -32,10 +32,10 @@ allprojects {
 2. In `build.gradle` of `app` module, include this dependency
         
 ```groovy
-implementation "com.github.omkar-tenkale:ExplodingComposable:1.0.0"
+implementation "com.github.omkar-tenkale:ExplodingComposable:1.0.1"
 ```
 
-You can find latest version and changelogs in the [releases](https://github.com/omkar-tenkale/ExplodingComposable/releases).
+Find latest version and changelogs in the [releases](https://github.com/omkar-tenkale/ExplodingComposable/releases).
 
 <br/>
         
@@ -59,7 +59,9 @@ Explodable(controller = explosionController) {
     
 ## 🎨 Customization
 ExplodingComposable offers a variety of customizations
-    
+
+<img width="300px" height="600px"  src="https://raw.githubusercontent.com/omkar-tenkale/ExplodingComposable/master/art/exploding-composable-configuration.webp"/>
+
 ```kotlin
 val explosionController = rememberExplosionController()
 
@@ -99,8 +101,12 @@ Explodable(
 
 ## 📱 Demo
 
-Download the [sample app](https://github.com/omkar-tenkale/ExplodingComposable/releases/download/1.0.0/ExplodingComposableDemo.apk)
+Download the [sample app](https://github.com/omkar-tenkale/ExplodingComposable/releases/download/1.0.1/ExplodingComposableDemo.apk)
 or explore the [sample project](https://github.com/omkar-tenkale/ExplodingComposable/tree/master/app/src/main/java/dev/omkartenkale/explodable/sample)
+
+## Discuss 💬
+
+Have any questions, doubts or want to present your opinions, views? You're always welcome. You can [start a discussion](https://github.com/omkar-tenkale/ExplodingComposable/discussions)
 
 ## 📃 License
 Licensed under Apache license 2.0
