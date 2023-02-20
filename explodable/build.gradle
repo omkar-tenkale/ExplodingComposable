@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'org.jetbrains.dokka'
+    id 'maven-publish'
 }
 
 android {
@@ -61,4 +62,16 @@ dokkaHtml.configure {
     }
 }
 
-apply plugin: 'com.vanniktech.maven.publish'
+publishing {
+    publications {
+        release(MavenPublication) {
+            groupId = 'com.github.omkar-tenkale'
+            artifactId = 'ExplodingComposable'
+            version = '1.0.0'
+
+            afterEvaluate {
+                from components.release
+            }
+        }
+    }
+}
