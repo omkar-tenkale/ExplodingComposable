@@ -3,10 +3,9 @@
 <h4 align="center">A Jetpack Compose utility library to add explosive dust effect animation to any composable</h4>
 
 <div align="center">
-  <img src="https://img.shields.io/maven-central/v/dev.omkartenkale/exploding-composable" />
-    <a href="">
-        <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg"/>
-    </a>
+  <img src="https://jitpack.io/v/omkar-tenkale/ExplodingComposable.svg" />
+  <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg?style=flat)](http://www.apache.org/licenses/LICENSE-2.0.html" />
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
 </div>
 
 <div align="center">
