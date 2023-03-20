@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.compose.ui.geometry.MutableRect
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.unit.Dp
+import java.util.*
 
 fun ImageBitmap.getPixel(x: Int, y: Int) = IntArray(1).apply {
     readPixels(this, startX = x, startY = y, width = 1, height = 1)
@@ -15,6 +17,7 @@ fun Float.mapInRange(inMin: Float, inMax: Float, outMin: Float, outMax: Float): 
 }
 
 fun Int.dpToPx() = toFloat().dpToPx()
+fun Dp.toPx() = value.dpToPx()
 
 fun Float.dpToPx() = this * Resources.getSystem().displayMetrics.density
 
@@ -46,3 +49,8 @@ fun MutableRect.scale(factor: Float) {
     top = rectCenterY - newHeight / 2F
     bottom = rectCenterY + newHeight / 2F
 }
+
+private val random = Random()
+fun Float.randomTillZero() = this * random.nextFloat()
+fun randomInRange(min:Float,max:Float) = min + (max - min).randomTillZero()
+fun randomBoolean(trueProbabilityPercentage: Int) = random.nextFloat() < trueProbabilityPercentage/100f

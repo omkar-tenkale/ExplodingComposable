@@ -10,9 +10,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.drawscope.DrawScope
-import dev.omkartenkale.explodable.Particle.Particle.END_VALUE
-import dev.omkartenkale.explodable.Particle.Particle.V
-import java.util.*
+import androidx.compose.ui.unit.dp
+import kotlin.math.pow
 
 @Composable
 internal fun Explosion(progress: Float, bitmap: ImageBitmap, bound: Rect) {
@@ -23,20 +22,27 @@ internal fun Explosion(progress: Float, bitmap: ImageBitmap, bound: Rect) {
             val h = bitmap.height / (partLen + 2)
             for (i in 0 until partLen) {
                 for (j in 0 until partLen) {
-                    add(Particle.Particle(bitmap.getPixel((j + 1) * w, (i + 1) * h), bound))
+                    add(
+                        Particle(
+                            color = Color(bitmap.getPixel((j + 1) * w, (i + 1) * h)),
+                            startXPosition = bound.centerX.toInt(),
+                            startYPosition = bound.centerY.toInt(),
+                            maxVerticalDisplacement = bound.height * randomInRange(0.2f, 0.38f),
+                            maxHorizontalDisplacement = bound.width * randomInRange(-0.9f, 0.9f)
+                        )
+                    )
                 }
             }
         }
     }
 
-    val mappedProgress = progress.mapInRange(0f, 1f, 0f, END_VALUE)
     Canvas(modifier = Modifier, onDraw = {
         particles.forEach {
-            it.updateProgress(mappedProgress, V)
+            it.updateProgress(progress)
             if (it.alpha > 0f) {
                 drawCircle(
-                    center = Offset(it.cx, it.cy),
-                    radius = it.radius,
+                    center = Offset(it.currentXPosition, it.currentYPosition),
+                    radius = it.currentRadius,
                     alpha = it.color.alpha * it.alpha,
                     color = it.color
                 )
@@ -53,74 +59,50 @@ private fun DrawScope.drawDebugRect(bound: Rect) {
     )
 }
 
-private class Particle {
+class Particle(
+    val color: Color,
+    val startXPosition: Int,
+    val startYPosition: Int,
+    val maxHorizontalDisplacement: Float,
+    val maxVerticalDisplacement: Float
+) {
+    val velocity = 4 * maxVerticalDisplacement
+    val acceleration = -2 * velocity
+    var currentXPosition = 0f
+    var currentYPosition = 0f
+
+    var visibilityThresholdLow = randomInRange(0f, 0.14f)
+    var visibilityThresholdHigh = randomInRange(0f, 0.4f)
+
+    val initialXDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
+    val initialYDisplacement = 10.dp.toPx() * randomInRange(-1f, 1f)
+
     var alpha = 0f
-    var color = Color.Transparent
-    var cx = 0f
-    var cy = 0f
-    var radius = 0f
-    var baseCx = 0f
-    var baseCy = 0f
-    var baseRadius = 0f
-    var top = 0f
-    var bottom = 0f
-    var mag = 0f
-    var neg = 0f
-    var life = 0f
-    var overflow = 0f
-    fun updateProgress(factor: Float, V: Float) {
-        var f = 0f
-        var normalization = factor / END_VALUE
-        if (normalization < life || normalization > 1f - overflow) {
-            alpha = 0f
-            return
-        }
-        normalization = (normalization - life) / (1f - life - overflow)
-        val f2 = normalization * END_VALUE
-        if (normalization >= 0.7f) {
-            f = (normalization - 0.7f) / 0.3f
-        }
-        alpha = 1f - f
-        f = bottom * f2
-        cx = baseCx + f
-        cy = (baseCy - neg * Math.pow(f.toDouble(), 2.0)).toFloat() - f * mag
-        radius = V + (baseRadius - V) * f2
+    var currentRadius = 0f
+    val startRadius = 2.dp.toPx()
+    val endRadius = if (randomBoolean(trueProbabilityPercentage = 20)) {
+        randomInRange(startRadius, 5.dp.toPx())
+    } else {
+        randomInRange(1.5.dp.toPx(), startRadius)
     }
 
-    companion object Particle {
-        const val END_VALUE = 1.4f
-        val X = 5.dpToPx()
-        val Y = 20.dpToPx()
-        val V = 2.dpToPx()
-        val W = 1.dpToPx()
-        val random = Random(System.currentTimeMillis())
-
-        fun Particle(color: Int, bound: Rect) = Particle().apply {
-            this.color = Color(color)
-            radius = V
-            if (random.nextFloat() < 0.2f) {
-                baseRadius = V + (X - V) * random.nextFloat()
-            } else {
-                baseRadius = W + (V - W) * random.nextFloat()
-            }
-            val nextFloat = random.nextFloat()
-            top = bound.height * (0.18f * random.nextFloat() + 0.2f)
-            top = if (nextFloat < 0.2f) top else top + top * 0.2f * random.nextFloat()
-            bottom = bound.height * (random.nextFloat() - 0.5f) * 1.8f
-            var f =
-                if (nextFloat < 0.2f) bottom else if (nextFloat < 0.8f) bottom * 0.6f else bottom * 0.3f
-            bottom = f
-            mag = 4.0f * top / bottom
-            neg = -mag / bottom
-            f = bound.centerX + Y * (random.nextFloat() - 0.5f)
-            baseCx = f
-            cx = f
-            f = bound.centerY + Y * (random.nextFloat() - 0.5f)
-            baseCy = f
-            cy = f
-            life = END_VALUE / 10 * random.nextFloat()
-            overflow = 0.4f * random.nextFloat()
-            alpha = 1f
-        }
+    fun updateProgress(explosionProgress: Float) {
+        val trajectoryProgress =
+            if (explosionProgress < visibilityThresholdLow || (explosionProgress > (1 - visibilityThresholdHigh))) {
+                alpha = 0f; return
+            } else (explosionProgress - visibilityThresholdLow).mapInRange(
+                0f, 1f - visibilityThresholdHigh - visibilityThresholdLow, 0f, 1f
+            )
+        alpha = if (trajectoryProgress < 0.7f) 1f else (trajectoryProgress - 0.7f).mapInRange(
+            0f, 0.3f, 1f, 0f
+        )
+        currentRadius = startRadius + (endRadius - startRadius) * trajectoryProgress
+        val currentTime = trajectoryProgress.mapInRange(0f, 1f, 0f, 1.4f)
+        val verticalDisplacement =
+            (currentTime * velocity + 0.5 * acceleration * currentTime.toDouble()
+                .pow(2.0)).toFloat()
+        currentYPosition = startXPosition + initialXDisplacement - verticalDisplacement
+        currentXPosition =
+            startYPosition + initialYDisplacement + maxHorizontalDisplacement * trajectoryProgress
     }
 }
