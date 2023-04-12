@@ -104,6 +104,10 @@ Explodable(
 Download the [sample app](https://github.com/omkar-tenkale/ExplodingComposable/releases/download/1.0.1/ExplodingComposableDemo.apk)
 or explore the [sample project](https://github.com/omkar-tenkale/ExplodingComposable/tree/master/app/src/main/java/dev/omkartenkale/explodable/sample)
 
+## How it Works 🔧
+Curious about how the library works under the hood?
+Check out this in-depth [Medium article](https://proandroiddev.com/creating-a-particle-explosion-animation-in-jetpack-compose-4ee42022bbfa) for all the details
+
 ## Discuss 💬
 
 Have any questions, doubts or want to present your opinions, views? You're always welcome. You can [start a discussion](https://github.com/omkar-tenkale/ExplodingComposable/discussions)
